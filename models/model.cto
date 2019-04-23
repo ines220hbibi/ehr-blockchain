@@ -40,13 +40,20 @@ enum genderType {
 /**
 * Our Participants
  */
-
+participant  Pharmacy identified by pharmacyId {
+  o String pharmacyId
+  o String name
+  o Address address
+  o String Emprunt
+  o String phoneNumber
+}
 participant Practitioner identified by pratitionerId {
   o String pratitionerId
   o String firstName
   o String lastName
   o String email
   o String cin
+  o String Emprunt
   o Address address
   o String phoneNumber
   o String speciality
@@ -54,10 +61,10 @@ participant Practitioner identified by pratitionerId {
 }
 participant Patient identified by patientId {
   o String patientId
-  o String photo
-  o String Emprunt
   o String firstName
   o String lastName
+  o String photo
+  o String Emprunt
   o genderType gender
   o DateTime dateOfBirth
   o String cin
@@ -69,34 +76,40 @@ participant Patient identified by patientId {
   o String bloodType
   o Double height
   o Double weight
-  --> Drug[] pharmacyDrugs
-  --> Drug[] practitionerDrugs
-  --> PhysicalActivity[] physicalActivity optional
-  --> Nutrition[] nutrition optional
-  --> MriResults[] mriResults optional
-  --> Allergies[] allergies optional
-  --> LabTestResults[] labTestResults optional
-  --> ChronicDiseases[] chronicDiseases optional
-  --> Prescription[] prescriptions optional
-  --> Consultation[] consultations optional
+  o Drug[] pharmacyDrugs optional
+  o Drug[] practitionerDrugs optional
+  o PhysicalActivity[] physicalActivity optional
+  o Nutrition[] nutrition optional
+  o MriResults[] mriResults optional
+  o Allergies[] allergies optional
+  o LabTestResults[] labTestResults optional
+  o ChronicDiseases[] chronicDiseases optional
+  o Prescription[] prescriptions optional
+  o Consultation[] consultations optional
 }
+
+
 
 transaction SampleTransaction {
   --> Patient patient
   --> Practitioner practitioner
 }
-transaction PatientAddNutrition {
-  o Nutrition nutrition
-  --> Patient patient
-}
-transaction PatientAddPhysicalActivity {
-  o PhysicalActivity physicalActivity
-  --> Patient patient
-}
+
 transaction PharmacyAddDrug {
   o Drug drug
   --> Patient patient
+  --> Pharmacy pharmacy
 }
+transaction PharmacyAddDrugFromPrescription {
+  --> Patient patient
+  o String prescriptionId
+}
+
+transaction addDrugToPrescription {
+  --> Prescription prescription
+  o Drug drug
+}
+
 transaction PractitionerAddDrug {
   o Drug drug
   --> Patient patient
@@ -127,11 +140,15 @@ transaction PractitionerAddChronicDisease {
   --> Patient patient
   --> Practitioner practitioner
 }
-transaction PharmacyAddDrugFromPrescription {
-  --> Patient patient
-  o String prescriptionId
-}
 
+transaction PatientAddNutrition {
+  o Nutrition nutrition
+  --> Patient patient
+}
+transaction PatientAddPhysicalActivity {
+  o PhysicalActivity physicalActivity
+  --> Patient patient
+}
 /**
 * Our Events
  */
@@ -163,12 +180,7 @@ event PractitionerAddLabResFinished {
 event PractitionerAddChronicDiseaseFinished {
   o String details
 }
-asset PharmacyDrugs identified by pharmacyDrugid {
-  o String pharmacyDrugid
-}
-asset PractitionerDrugs identified by practitionerDrugs {
-  o String practitionerDrugs
-}
+
 /**
 * Our Assets
  */
@@ -230,12 +242,12 @@ asset Consultation identified by consultationId {
   o DateTime consultionDate
   --> Practitioner practitioner
 }
-asset Pharmacy identified by pharmacyId {
-  o String pharmacyId
-  o String name
-  o Address address
-  o String phoneNumber
 
+asset PharmacyDrugs identified by pharmacyDrugid {
+  o String pharmacyDrugid
 }
-
+asset PractitionerDrugs identified by practitionerDrugs {
+  o String practitionerDrugs
+}
+ 
 
